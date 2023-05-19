@@ -653,6 +653,25 @@ namespace XamlAnimatedGif
                 }
             }
         }
+        public async void GoToLastFrame()
+        {
+            CurrentFrameIndex = FrameCount - 1;
+            bool isStopped = _timingManager.IsPaused || _timingManager.IsComplete;
+            _timingManager.Reset();
+            if (isStopped)
+            {
+                _timingManager.Pause();
+                _isStarted = false;
+                try
+                {
+                    await RenderFrameAsync(CurrentFrameIndex, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    OnError(ex, AnimationErrorKind.Rendering);
+                }
+            }
+        }
 
         protected abstract object AnimationSource { get; }
 
